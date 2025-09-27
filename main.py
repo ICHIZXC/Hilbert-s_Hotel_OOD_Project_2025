@@ -3,6 +3,7 @@ from AVL import AVL
 from HashMap import HashTable
 import time
 
+<<<<<<< Updated upstream
 def timer(func):
     def wrapper(*args, **kwargs):
         start = time.perf_counter()
@@ -27,3 +28,5 @@ class Hotel:
             self.avl.delete_node(room_num)
             self.hash.remove(room_num)
             
+=======
+>>>>>>> Stashed changes
