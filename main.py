@@ -1,4 +1,5 @@
 from AVL import AVL
+import pandas as pd
 from HashMap import HashTable
 import time
 
@@ -15,7 +16,23 @@ class Hotel:
     def __init__(self, size = 10):
         self.avl = AVL()
         self.hash = HashTable(size)
+        self.max_room_number = 0
+
+    def calculate_room_number(self, guest: int, car: int, plane: int, town: int, country:int, continent:int) -> int:
+        return (2**guest) * (3**car) * (5**plane) * (7**town) * (11**country) * (13**continent)
+    
+    @timer
+    def add_room(self, guest: int, car: int, plane: int, town: int, country:int, continent:int):
+        room_number = self.calculate_room_number(guest, car, plane, town, country, continent)
         
+        room_data = (guest, car, plane, town, country, continent)
+        self.hash.insert(room_number, room_data)
+
+        self.avl.add(room_number)
+        self.max_room_number = max(self.max_room_number, room_number)
+
+        return room_number
+
     @timer
     def search(self, room_num):
         return self.hash.search(room_num)
@@ -25,4 +42,13 @@ class Hotel:
         if self.hash.search(room_num):
             self.avl.delete_node(room_num)
             self.hash.remove(room_num)
-            
+    
+    @timer
+    def write_file(self, file_name: str):
+        data = []
+        for bucket in self.hash.table:
+            if bucket:
+                for key, value in bucket:
+                    data.append((key, value))
+        df = pd.DataFrame(data, columns=["Room Number", "Details"])
+        df.to_csv(file_name, index=False)
