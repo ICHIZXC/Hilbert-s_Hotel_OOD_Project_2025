@@ -4,17 +4,22 @@ class HashTable:
         self.table = [[] for _ in range(self.size)]
 
     def __str__(self):
+        lines = []
         for i, bucket in enumerate(self.table):
-            if bucket and len(bucket) != 0:
-                print(f"Bucket {i}: {bucket}")
-        return ""
+            if bucket:
+                lines.append(f"Bucket {i}: {bucket}")
+        return "\n".join(lines)
 
     def hash_key(self, key) -> int:
-        return key % self.size
+        return hash(key) % self.size
 
     def insert(self, key, value):
         bucket_index = self.hash_key(key)
         bucket = self.table[bucket_index]
+        for i, (k, v) in enumerate(bucket):
+            if k == key:
+                bucket[i] = (key, value)
+                return
         bucket.append((key, value))
 
     def search(self, key):

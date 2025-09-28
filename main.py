@@ -1,4 +1,3 @@
-# This is main program 
 from AVL import AVL
 from HashMap import HashTable
 import time
@@ -26,4 +25,5 @@ class Hotel:
         if self.hash.search(room_num):
             self.avl.delete_node(room_num)
             self.hash.remove(room_num)
-    
+            
+
