@@ -42,7 +42,7 @@ class Hotel:
         if self.hash.search(room_num):
             self.avl.delete_node(room_num)
             self.hash.remove(room_num)
-    
+
     @timer
     def write_file(self, file_name: str):
         data = []
