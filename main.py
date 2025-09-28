@@ -58,12 +58,6 @@ class Hotel:
         taken_room = sum(len(bucket) for bucket in self.hash.table)
         return total_room - taken_room
     
-    @timer
-    def create_file(self, filename:str):
-        data = [(key,value) for bucket in self.hash.table for key, value in bucket]   
-        rd = pd.DataFrame(data, columns=["Room Number", "Details"])
-        rd.to_csv(filename, index=False)
-
     def memory_usage(self):
         return sys.getsizeof(self.hash) + sys.getsizeof(self.root)
 
