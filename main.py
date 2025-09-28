@@ -19,8 +19,8 @@ class Hotel:
         self.hash = HashTable(size)
         self.max_room_number = 0
 
-    def calculate_room_number(self, guest: int, car: int, plane: int, fleet: int) -> int:
-        return (2**person) * (3**car) * (5** ship) * (7**fleet)
+    def calculate_room_number(self, guest: int, car: int, plane: int, city: int, country:int, region:int) -> int:
+        return (2**guest) * (3**car) * (5**plane) * (7**city) * (11**country) * (13**region)
     
     @timer
     def add_room(self, person: int, car: int, ship: int, fleet: int):
