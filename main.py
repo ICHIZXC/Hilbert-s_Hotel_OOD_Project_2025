@@ -47,7 +47,7 @@ class Hotel:
     @timer
     def write_file(self, file_name: str):
         data = []
-        for bucket in self.hash_table.table:
+        for bucket in self.hash.table:
             if bucket:
                 for key, value in bucket:
                     data.append((key, value))
