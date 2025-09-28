@@ -1,5 +1,6 @@
 # This is main program 
 from AVL import AVL
+<<<<<<< HEAD
 from HashMap import HashTable
 import time
 import sys
@@ -69,3 +70,5 @@ class Hotel:
 
 hotel = Hotel(size=10)
 
+=======
+>>>>>>> parent of 6c86435 (Merge pull request #4 from ICHIZXC/ICHI)
