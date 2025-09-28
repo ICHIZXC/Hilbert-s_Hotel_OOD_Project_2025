@@ -20,10 +20,18 @@ class Hotel:
 
     def calculate_room_number(self, guest: int, car: int, plane: int, town: int, country:int, continent:int) -> int:
         return (2**guest) * (3**car) * (5**plane) * (7**town) * (11**country) * (13**continent)
-    
+
     @timer
     def add_room(self, guest: int, car: int, plane: int, town: int, country:int, continent:int):
         room_number = self.calculate_room_number(guest, car, plane, town, country, continent)
+        details = {
+            'continent': continent,
+            'country': country,
+            'town': town,
+            'plane': plane,
+            'car': car,
+            'guest': guest
+        }
         
         room_data = (guest, car, plane, town, country, continent)
         self.hash.insert(room_number, room_data)
@@ -52,3 +60,24 @@ class Hotel:
                     data.append((key, value))
         df = pd.DataFrame(data, columns=["Room Number", "Details"])
         df.to_csv(file_name, index=False)
+
+    def search(self, room_num):
+        return self.hash.search(room_num)     
+
+    @timer
+    def sort(self):
+        result = []
+        self.avl.inorder(self.root, result)
+        return result
+    
+    @timer
+    def blank_room(self) -> int:
+        total_room = self.maxRoom_num
+        taken_room = sum(len(bucket) for bucket in self.hash.table)
+        return total_room - taken_room
+    
+    def memory_usage(self):
+        return sys.getsizeof(self.hash) + sys.getsizeof(self.root)
+
+hotel = Hotel(size=10)
+
