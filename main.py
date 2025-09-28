@@ -27,3 +27,4 @@ class Hotel:
             self.avl.delete_node(room_num)
             self.hash.remove(room_num)
             
+
