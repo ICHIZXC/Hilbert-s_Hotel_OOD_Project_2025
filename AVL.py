@@ -74,15 +74,13 @@ class AVL:
         return x
 
     def inorder(self):
-        result = []
-        self._inorder(self.root, result)
-        return result
+        self._inorder(self.root)
 
-    def _inorder(self, root, result):
+    def _inorder(self, root):
         if root is not None:
-            self._inorder(root.left, result)
-            result.append(root.data)
-            self._inorder(root.right, result)
+            self._inorder(root.left)
+            print(root.data, end=" ")
+            self._inorder(root.right)
         
     def delete_node(self,target):
         self._delete_node(self.root,target)
