@@ -26,7 +26,7 @@ class Hotel:
         return (2**guest) * (3**car) * (5**plane) * (7**town) * (11**country) * (13**continent)
 
     @timer
-    def add_room(self, guest: int, car: int, plane: int, town: int, country:int, continent:int):
+    def add_room(self, guest: int, car: int, plane: int, town: int, country: int, continent: int):
         room_num = self.calculate_room_number(guest, car, plane, town, country, continent)
         details = {
             'continent': continent,
@@ -37,11 +37,21 @@ class Hotel:
             'guest': guest
         }
 
-        self.hash.insert(room_num, details)
-        self.avl.add(room_num)
-        self.max_room_num = max(self.max_room_num, room_num)
+        if self.hash.search(room_num) is None:
+            self.hash.insert(room_num, details)
+            self.avl.add(room_num)
+            self.max_room_num = max(self.max_room_num, room_num)
+        else:
+            i = 1
+            while self.hash.search(room_num) is not None:
+                room_num += i ** 2
+                i += 1
+            self.hash.insert(room_num, details)
+            self.avl.add(room_num)
+            self.max_room_num = max(self.max_room_num, room_num)
 
         return room_num
+
 
     @timer
     def search(self, room_num):
