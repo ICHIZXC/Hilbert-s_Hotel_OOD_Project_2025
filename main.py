@@ -16,7 +16,7 @@ def timer(func):
     return wrapper
 
 class Hotel:
-    def __init__(self, size = 10):
+    def __init__(self, size = 101):
         self.avl = AVL()
         self.hash = HashTable(size)
         self.root = None
