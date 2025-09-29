@@ -98,13 +98,13 @@ class AVL:
                 return root.left
             succ = self.min_value(root.right)
             root.data = succ.data
-            root.right = self.delete_node(root.right, succ.data)
+            root.right = self._delete_node(root.right, succ.data)
             return root
         
         elif target < root.data:  
-            root.left = self.delete_node(root.left, target)
+            root.left = self._delete_node(root.left, target)
         else:
-            root.right = self.delete_node(root.right, target)
+            root.right = self._delete_node(root.right, target)
         
         root = self.rebalance(root)
         root.setHeight()
