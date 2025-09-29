@@ -11,7 +11,7 @@ def timer(func):
         start = time.perf_counter()
         result = func(*args, **kwargs)
         end = time.perf_counter()
-        print(f"{func.__name__} runtime: {end - start:.6f} sec")
+        print(f"\n{func.__name__} runtime: {end - start:.6f} sec")
         return result
     return wrapper
 
@@ -225,7 +225,8 @@ while(True):
         room_num = int(input("Enter Room Number : "))
         hotel.delete(room_num)
     elif cmd == '4':
-        print("Sorted Room : ", hotel.sort())
+        print("Sorted Room : ", end = '')
+        hotel.sort()
     elif cmd == '5':
         print("Blank Room : ", hotel.blank_room())
     elif cmd == '6':
