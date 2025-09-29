@@ -211,12 +211,12 @@ while(True):
             x = int(input("X = "))
             y = int(input("Y = "))
             z = int(input("Z = "))
-            for f in range(z):
-                for e in range(y):
-                    for d in range(x):
-                        for c in range(w):
-                            for b in range(v):
-                                for a in range(u): 
+            for f in range(1, z+1):  # continent 1..Z
+                for e in range(1, y+1):
+                    for d in range(1, x+1):
+                        for c in range(1, w+1):
+                            for b in range(1, v+1):
+                                for a in range(1, u+1): 
                                     hotel.add_room(a,b,c,d,e,f)
     elif cmd == '2':
         room_num = int(input("Enter Room Number : "))
