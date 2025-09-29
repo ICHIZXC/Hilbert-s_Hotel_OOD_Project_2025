@@ -159,35 +159,47 @@ while(True):
         if opt == '1':
             print("Add U Guest")
             u = int(input("U = "))
+            start = time.perf_counter()            
             for a in range(u) : 
                 hotel.add_room(a,0,0,0,0,0)
+            end = time.perf_counter()
+            print("\nTotal runtime:", end - start)
         elif opt == '2':
             print("Add U Guest on V Car")
             u = int(input("U = "))
             v = int(input("V = "))
+            start = time.perf_counter()
             for b in range(v):
                 for a in range(u): 
                     hotel.add_room(a,b,0,0,0,0)
+            end = time.perf_counter()
+            print("\nTotal runtime:", end - start)
         elif opt == '3':
             print("Add U Guest on V Car from W Plane")
             u = int(input("U = "))
             v = int(input("V = "))
             w = int(input("W = "))
+            start = time.perf_counter()
             for c in range(w):
                 for b in range(v):
                     for a in range(u): 
                         hotel.add_room(a,b,c,0,0,0)
+            end = time.perf_counter()
+            print("\nTotal runtime:", end - start)
         elif opt == '4':
             print("Add U Guest on V Car from W Plane from X Town")
             u = int(input("U = "))
             v = int(input("V = "))
             w = int(input("W = "))
             x = int(input("X = "))
+            start = time.perf_counter()
             for d in range(x):
                 for c in range(w):
                     for b in range(v):
                         for a in range(u): 
                             hotel.add_room(a,b,c,d,0,0)
+            end = time.perf_counter()
+            print("\nTotal runtime:", end - start)
         elif opt == '5':
             print("Add U Guest on V Car from W Plane from X Town in Y Country")
             u = int(input("U = "))
@@ -195,12 +207,15 @@ while(True):
             w = int(input("W = "))
             x = int(input("X = "))
             y = int(input("Y = "))
+            start = time.perf_counter()
             for e in range(y):
                 for d in range(x):
                     for c in range(w):
                         for b in range(v):
                             for a in range(u): 
                                 hotel.add_room(a,b,c,d,e,0)
+            end = time.perf_counter()
+            print("\nTotal runtime:", end - start)
         elif opt == '6':
             print("Add U Guest on V Car from W Plane from X Town in Y Country in Z Continent")
             u = int(input("U = "))
@@ -209,6 +224,7 @@ while(True):
             x = int(input("X = "))
             y = int(input("Y = "))
             z = int(input("Z = "))
+            start = time.perf_counter()
             for f in range(z):
                 for e in range(y):
                     for d in range(x):
@@ -216,6 +232,8 @@ while(True):
                             for b in range(v):
                                 for a in range(u): 
                                     hotel.add_room(a,b,c,d,e,f)
+            end = time.perf_counter()
+            print("\nTotal runtime:", end - start)
     elif cmd == '2':
         room_num = int(input("Enter Room Number : "))
         print("Search Room", room_num," : ", hotel.search(room_num))
