@@ -3,6 +3,8 @@ import pandas as pd
 from HashMap import HashTable
 import time
 import sys
+from pprint import pprint
+
 
 def timer(func):
     def wrapper(*args, **kwargs):
@@ -66,7 +68,7 @@ class Hotel:
 
     @timer
     def sort(self):
-        self.avl.inorder()
+        return self.avl.inorder()
     
     @timer
     def blank_room(self) -> int:
