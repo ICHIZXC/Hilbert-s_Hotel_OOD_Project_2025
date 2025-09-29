@@ -125,9 +125,13 @@ class Hotel:
 hotel = Hotel(size=10)
 
 initial_guest = int(input("Initial Guest: "))
+start = time.perf_counter()
 for i in range(initial_guest):
     hotel.add_room(i,0,0,0,0,0)
 print(hotel.hash)
+end = time.perf_counter()
+print("\nTotal runtime:", end - start)
+
 while(True):
     print(" ----------𝖂𝖊𝖑𝖈𝖔𝖒𝖊 𝖙𝖔 𝕳𝖎𝖑𝖘𝖇𝖊𝖗𝖙-𝕳𝖔𝖙𝖊𝖑----------")
     print("Catalog : ")
