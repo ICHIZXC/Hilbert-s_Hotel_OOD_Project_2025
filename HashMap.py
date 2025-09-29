@@ -13,7 +13,7 @@ class HashTable:
         return "\n".join(lines)
 
     def hash_key(self, key) -> int:
-        return hash(key) % self.size
+        return key % self.size
     
     def is_prime(self,n):
         if n < 2:
@@ -35,7 +35,7 @@ class HashTable:
         new_table = [[] for _ in range(new_size)]
         for bucket in self.table:
             for k, v in bucket:
-                new_index = hash(k) % new_size
+                new_index = k % new_size
                 new_table[new_index].append((k, v))
         self.size = new_size
         self.table = new_table

@@ -23,7 +23,7 @@ class Hotel:
         self.max_room_num = 0
 
     def calculate_room_number(self, guest: int, car: int, plane: int, town: int, country:int, continent:int) -> int:
-        return (2**guest) * (3**car) * (5**plane) * (7**town) * (11**country) * (13**continent)
+        return (guest**2) * (car**3) * (plane**5) * (town**7) * (country**11) * (continent**13)
 
     @timer
     def add_room(self, guest: int, car: int, plane: int, town: int, country: int, continent: int):
@@ -134,7 +134,7 @@ class Hotel:
                     result.append((room_num,details))
         return result
 
-hotel = Hotel(size=10)
+hotel = Hotel()
 
 initial_guest = int(input("Initial Guest: "))
 start = time.perf_counter()
