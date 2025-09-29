@@ -67,5 +67,6 @@ class HashTable:
             k, v = kv
             if key == k:
                 del bucket[i]
+                self.count -= 1
                 return True
         return False
