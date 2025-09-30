@@ -4,6 +4,7 @@ from HashMap import HashTable
 import time
 import sys
 from pprint import pprint
+from pympler import asizeof
 
 
 def timer(func):
@@ -87,7 +88,7 @@ class Hotel:
         return total_room - taken_room
     
     def memory_usage(self):
-        return sys.getsizeof(self.hash) + sys.getsizeof(self.root)
+        return asizeof.asizeof(self.hash) + asizeof.asizeof(self.root)
     
     @timer
     def search_by_continent(self, continent_id:int) -> list:
@@ -150,15 +151,16 @@ while(True):
     print("(1) Add Guest")
     print("(2) Search Room")
     print("(3) Delete Room")    
-    print("(4) Print Sorted Room")
-    print("(5) Print Blank Room")
-    print("(6) Save File")
-
-    print("(7) Find Guest from Specific Car")
-    print("(8) Find Guest from Specific Plane")
-    print("(9) Find Guest from Specific Town")
-    print("(10) Find Guest from Specific Country")
-    print("(11) Find Guest from Specific Continent")
+    print("(4) Print Hashed Room")
+    print("(5) Print Sorted Room")
+    print("(6) Print Blank Room")
+    print("(7) Save File")
+    print("(8) Find Guest from Specific Car")
+    print("(9) Find Guest from Specific Plane")
+    print("(10) Find Guest from Specific Town")
+    print("(11) Find Guest from Specific Country")
+    print("(12) Find Guest from Specific Continent")
+    print("(13) Memory Used")
 
     print("(x) Exit")
     
@@ -270,27 +272,31 @@ while(True):
         room_num = int(input("Enter Room Number : "))
         hotel.delete(room_num)
     elif cmd == '4':
+        print(hotel.hash)
+    elif cmd == '5':
         print("Sorted Room : ", end = '')
         hotel.sort()
-    elif cmd == '5':
-        print("Blank Room : ", hotel.blank_room())
     elif cmd == '6':
-        hotel.write_file("./hotel-room_lists.csv")
+        print("Blank Room : ", hotel.blank_room())
     elif cmd == '7':
+        hotel.write_file("./hotel-room_lists.csv")
+    elif cmd == '8':
         car_num = int(input("Enter Car Number : "))
         print("Guest from Car Number",car_num," : ", hotel.search_by_car(car_num))
-    elif cmd == '8':
+    elif cmd == '9':
         plane_num = int(input("Enter Plane Number : "))
         print("Guest from Plane Number",plane_num," : ", hotel.search_by_plane(plane_num))
-    elif cmd == '9':
+    elif cmd == '10':
         town_num = int(input("Enter Town Number : "))
         print("Guest from Town Number",town_num," : ", hotel.search_by_town(town_num))
-    elif cmd == '10':
+    elif cmd == '11':
         country_num = int(input("Enter Country Number : "))
         print("Guest from Country Number",country_num," : ", hotel.search_by_country(country_num))
-    elif cmd == '11':
+    elif cmd == '12':
         continent_num = int(input("Enter Continent Number : "))
         print("Guest from Continent Number",continent_num," : ", hotel.search_by_continent(continent_num))
+    elif cmd == '13':
+        print(f"Memory used : {hotel.memory_usage()} byte(s)")
     elif cmd == 'x':
         break
     else:
