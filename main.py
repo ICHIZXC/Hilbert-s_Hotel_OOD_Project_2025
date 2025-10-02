@@ -143,6 +143,7 @@ class Hotel:
         return result
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 hotel = Hotel(size=10)
 
 initial_guest = int(input("Initial Guest: "))
@@ -269,6 +270,9 @@ while(True):
         break
     else:
         print("Invalid Selection")
+=======
+
+>>>>>>> Stashed changes
 =======
 
 >>>>>>> Stashed changes
