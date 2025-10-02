@@ -12,9 +12,14 @@ def timer(func):
         start = time.perf_counter()
         result = func(*args, **kwargs)
         end = time.perf_counter()
-        print(f"\n{func.__name__} runtime: {end - start:.6f} sec")
+
+        if func.__name__ == "add_room":
+            print(f"Added room: {result} | args={args[1:]}, kwargs={kwargs}")
+
+        print(f"{func.__name__} runtime: {end - start:.6f} sec")
         return result
     return wrapper
+
 
 class Hotel:
     def __init__(self, size = 101):
