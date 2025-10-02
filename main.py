@@ -26,6 +26,7 @@ class Hotel:
         return (2**guest) * (3**car) * (5**plane) * (7**town) * (11**country) * (13**continent)
 
     @timer
+<<<<<<< Updated upstream
     def add_room(self, guest: int, car: int, plane: int, town: int, country: int, continent: int):
         room_num = self.calculate_room_number(guest, car, plane, town, country, continent)
         details = {
@@ -36,6 +37,13 @@ class Hotel:
             'car': car,
             'guest': guest
         }
+=======
+    def add_room(self, person: int, car: int, ship: int, fleet: int):
+        room_number = self.calculate_room_number()
+        
+        room_data = (person, car, ship, fleet)
+        self.hash.insert(room_number, room_data)
+>>>>>>> Stashed changes
 
         if self.hash.search(room_num) is None:
             self.hash.insert(room_num, details)
@@ -134,6 +142,7 @@ class Hotel:
                     result.append((room_num,details))
         return result
 
+<<<<<<< Updated upstream
 hotel = Hotel(size=10)
 
 initial_guest = int(input("Initial Guest: "))
@@ -260,3 +269,6 @@ while(True):
         break
     else:
         print("Invalid Selection")
+=======
+
+>>>>>>> Stashed changes
