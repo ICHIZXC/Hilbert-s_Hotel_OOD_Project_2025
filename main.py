@@ -4,6 +4,7 @@ from HashMap import HashTable
 import time
 import sys
 from pprint import pprint
+from pympler import asizeof
 
 
 def timer(func):
@@ -16,14 +17,14 @@ def timer(func):
     return wrapper
 
 class Hotel:
-    def __init__(self, size = 10):
+    def __init__(self, size = 101):
         self.avl = AVL()
         self.hash = HashTable(size)
         self.root = None
         self.max_room_num = 0
 
     def calculate_room_number(self, guest: int, car: int, plane: int, town: int, country:int, continent:int) -> int:
-        return (2**guest) * (3**car) * (5**plane) * (7**town) * (11**country) * (13**continent)
+        return (guest**2) * (car**3) * (plane**5) * (town**7) * (country**11) * (continent**13)
 
     @timer
 <<<<<<< Updated upstream
@@ -95,7 +96,7 @@ class Hotel:
         return total_room - taken_room
     
     def memory_usage(self):
-        return sys.getsizeof(self.hash) + sys.getsizeof(self.root)
+        return asizeof.asizeof(self.hash) + asizeof.asizeof(self.root)
     
     @timer
     def search_by_continent(self, continent_id:int) -> list:
@@ -142,30 +143,36 @@ class Hotel:
                     result.append((room_num,details))
         return result
 
+hotel = Hotel()
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 hotel = Hotel(size=10)
 
 initial_guest = int(input("Initial Guest: "))
+start = time.perf_counter()
 for i in range(initial_guest):
     hotel.add_room(i,0,0,0,0,0)
 print(hotel.hash)
+end = time.perf_counter()
+print("\nTotal runtime:", end - start)
+
 while(True):
     print(" ----------𝖂𝖊𝖑𝖈𝖔𝖒𝖊 𝖙𝖔 𝕳𝖎𝖑𝖘𝖇𝖊𝖗𝖙-𝕳𝖔𝖙𝖊𝖑----------")
     print("Catalog : ")
     print("(1) Add Guest")
     print("(2) Search Room")
     print("(3) Delete Room")    
-    print("(4) Print Sorted Room")
-    print("(5) Print Blank Room")
-    print("(6) Save File")
-
-    print("(7) Find Guest from Specific Car")
-    print("(8) Find Guest from Specific Plane")
-    print("(9) Find Guest from Specific Town")
-    print("(10) Find Guest from Specific Country")
-    print("(11) Find Guest from Specific Continent")
+    print("(4) Print Hashed Room")
+    print("(5) Print Sorted Room")
+    print("(6) Print Blank Room")
+    print("(7) Save File")
+    print("(8) Find Guest from Specific Car")
+    print("(9) Find Guest from Specific Plane")
+    print("(10) Find Guest from Specific Town")
+    print("(11) Find Guest from Specific Country")
+    print("(12) Find Guest from Specific Continent")
+    print("(13) Memory Used")
 
     print("(x) Exit")
     
@@ -179,38 +186,59 @@ while(True):
         print("(5) Add U Guest on V Car from W Plane from X Town in Y Country")
         print("(6) Add U Guest on V Car from W Plane from X Town in Y Country in Z Continent")
         opt = input("Select Option : ")
+        
         if opt == '1':
             print("Add U Guest")
             u = int(input("U = "))
-            for a in range(u) : 
+            start = time.perf_counter()            
+            for a in range(1, u+1) : 
                 hotel.add_room(a,0,0,0,0,0)
+                
+            end = time.perf_counter()
+            print("\nTotal runtime:", end - start)
+            
         elif opt == '2':
             print("Add U Guest on V Car")
             u = int(input("U = "))
             v = int(input("V = "))
-            for b in range(v):
-                for a in range(u): 
+            start = time.perf_counter()
+            for b in range(1, v+1):
+                for a in range(1, u+1): 
                     hotel.add_room(a,b,0,0,0,0)
+                    
+            end = time.perf_counter()
+            print("\nTotal runtime:", end - start)
+            
         elif opt == '3':
             print("Add U Guest on V Car from W Plane")
             u = int(input("U = "))
             v = int(input("V = "))
             w = int(input("W = "))
-            for c in range(w):
-                for b in range(v):
-                    for a in range(u): 
+            start = time.perf_counter()
+            for c in range(1, w+1):
+                for b in range(1, v+1):
+                    for a in range(1, u+1): 
                         hotel.add_room(a,b,c,0,0,0)
+                        
+            end = time.perf_counter()
+            print("\nTotal runtime:", end - start)
+            
         elif opt == '4':
             print("Add U Guest on V Car from W Plane from X Town")
             u = int(input("U = "))
             v = int(input("V = "))
             w = int(input("W = "))
             x = int(input("X = "))
-            for d in range(x):
-                for c in range(w):
-                    for b in range(v):
-                        for a in range(u): 
+            start = time.perf_counter()
+            for d in range(1, x+1):
+                for c in range(1, w+1):
+                    for b in range(1, v+1):
+                        for a in range(1, u+1):
                             hotel.add_room(a,b,c,d,0,0)
+                            
+            end = time.perf_counter()
+            print("\nTotal runtime:", end - start)
+            
         elif opt == '5':
             print("Add U Guest on V Car from W Plane from X Town in Y Country")
             u = int(input("U = "))
@@ -218,12 +246,17 @@ while(True):
             w = int(input("W = "))
             x = int(input("X = "))
             y = int(input("Y = "))
-            for e in range(y):
-                for d in range(x):
-                    for c in range(w):
-                        for b in range(v):
-                            for a in range(u): 
+            start = time.perf_counter()
+            for e in range(1, y+1):
+                for d in range(1, x+1):
+                    for c in range(1, w+1):
+                        for b in range(1, v+1):
+                            for a in range(1, u+1):
                                 hotel.add_room(a,b,c,d,e,0)
+                                
+            end = time.perf_counter()
+            print("\nTotal runtime:", end - start)
+            
         elif opt == '6':
             print("Add U Guest on V Car from W Plane from X Town in Y Country in Z Continent")
             u = int(input("U = "))
@@ -232,13 +265,18 @@ while(True):
             x = int(input("X = "))
             y = int(input("Y = "))
             z = int(input("Z = "))
-            for f in range(1, z+1):  # continent 1..Z
+            start = time.perf_counter()
+            for f in range(1, z+1):
                 for e in range(1, y+1):
                     for d in range(1, x+1):
                         for c in range(1, w+1):
                             for b in range(1, v+1):
                                 for a in range(1, u+1): 
                                     hotel.add_room(a,b,c,d,e,f)
+                                    
+            end = time.perf_counter()
+            print("\nTotal runtime:", end - start)
+            
     elif cmd == '2':
         room_num = int(input("Enter Room Number : "))
         print("Search Room", room_num," : ", hotel.search(room_num))
@@ -246,27 +284,31 @@ while(True):
         room_num = int(input("Enter Room Number : "))
         hotel.delete(room_num)
     elif cmd == '4':
+        print(hotel.hash)
+    elif cmd == '5':
         print("Sorted Room : ", end = '')
         hotel.sort()
-    elif cmd == '5':
-        print("Blank Room : ", hotel.blank_room())
     elif cmd == '6':
-        hotel.write_file("./hotel-room_lists.csv")
+        print("Blank Room : ", hotel.blank_room())
     elif cmd == '7':
+        hotel.write_file("./hotel-room_lists.csv")
+    elif cmd == '8':
         car_num = int(input("Enter Car Number : "))
         print("Guest from Car Number",car_num," : ", hotel.search_by_car(car_num))
-    elif cmd == '8':
+    elif cmd == '9':
         plane_num = int(input("Enter Plane Number : "))
         print("Guest from Plane Number",plane_num," : ", hotel.search_by_plane(plane_num))
-    elif cmd == '9':
+    elif cmd == '10':
         town_num = int(input("Enter Town Number : "))
         print("Guest from Town Number",town_num," : ", hotel.search_by_town(town_num))
-    elif cmd == '10':
+    elif cmd == '11':
         country_num = int(input("Enter Country Number : "))
         print("Guest from Country Number",country_num," : ", hotel.search_by_country(country_num))
-    elif cmd == '11':
+    elif cmd == '12':
         continent_num = int(input("Enter Continent Number : "))
         print("Guest from Continent Number",continent_num," : ", hotel.search_by_continent(continent_num))
+    elif cmd == '13':
+        print(f"Memory used : {hotel.memory_usage()} byte(s)")
     elif cmd == 'x':
         break
     else:
