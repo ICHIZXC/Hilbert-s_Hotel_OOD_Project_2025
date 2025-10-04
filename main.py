@@ -13,9 +13,6 @@ def timer(func):
         result = func(*args, **kwargs)
         end = time.perf_counter()
 
-        if func.__name__ == "add_room":
-            print(f"Added room: {result} | args={args[1:]}, kwargs={kwargs}")
-
         print(f"{func.__name__} runtime: {end - start:.6f} sec")
         return result
     return wrapper
@@ -29,7 +26,7 @@ class Hotel:
         self.max_room_num = 0
 
     def calculate_room_number(self, guest: int, car: int, plane: int, town: int, country:int, continent:int) -> int:
-        return (guest**2) * (car**3) * (plane**5) * (town**7) * (country**11) * (continent**13)
+        return ((guest+1)**2) * ((car+1)**3) * ((plane+1)**5) * ((town+1)**7) * ((country+1)**11) * ((continent+1)**13)
 
     @timer
     def add_room(self, guest: int, car: int, plane: int, town: int, country: int, continent: int):
@@ -301,7 +298,10 @@ while(True):
         continent_num = int(input("Enter Continent Number : "))
         print("Guest from Continent Number",continent_num," : ", hotel.search_by_continent(continent_num))
     elif cmd == '13':
-        print(f"Memory used : {hotel.memory_usage()} byte(s)")
+        mem_bytes = hotel.memory_usage()
+        mem_mb = mem_bytes / (1024 * 1024)
+        print(f"Memory used : {mem_mb:.2f} MB")
+
     elif cmd == 'x':
         break
     else:
