@@ -29,7 +29,7 @@ class Hotel:
         self.max_room_num = 0
 
     def calculate_room_number(self, guest: int, car: int, plane: int, town: int, country:int, continent:int) -> int:
-        return (guest**2) * (car**3) * (plane**5) * (town**7) * (country**11) * (continent**13)
+        return ((guest+1)**2) * ((car+1)**3) * ((plane+1)**5) * ((town+1)**7) * ((country+1)**11) * ((continent+1)**13)
 
     @timer
     def add_room(self, guest: int, car: int, plane: int, town: int, country: int, continent: int):
@@ -184,7 +184,7 @@ while(True):
             print("Add U Guest")
             u = int(input("U = "))
             start = time.perf_counter()            
-            for a in range(1, u+1) : 
+            for a in range(1, u) : 
                 hotel.add_room(a,0,0,0,0,0)
                 
             end = time.perf_counter()
@@ -195,8 +195,8 @@ while(True):
             u = int(input("U = "))
             v = int(input("V = "))
             start = time.perf_counter()
-            for b in range(1, v+1):
-                for a in range(1, u+1): 
+            for b in range(1, v):
+                for a in range(1, u): 
                     hotel.add_room(a,b,0,0,0,0)
                     
             end = time.perf_counter()
@@ -208,9 +208,9 @@ while(True):
             v = int(input("V = "))
             w = int(input("W = "))
             start = time.perf_counter()
-            for c in range(1, w+1):
-                for b in range(1, v+1):
-                    for a in range(1, u+1): 
+            for c in range(1, w):
+                for b in range(1, v):
+                    for a in range(1, u): 
                         hotel.add_room(a,b,c,0,0,0)
                         
             end = time.perf_counter()
@@ -223,10 +223,10 @@ while(True):
             w = int(input("W = "))
             x = int(input("X = "))
             start = time.perf_counter()
-            for d in range(1, x+1):
-                for c in range(1, w+1):
-                    for b in range(1, v+1):
-                        for a in range(1, u+1):
+            for d in range(1, x):
+                for c in range(1, w):
+                    for b in range(1, v):
+                        for a in range(1, u):
                             hotel.add_room(a,b,c,d,0,0)
                             
             end = time.perf_counter()
@@ -240,11 +240,11 @@ while(True):
             x = int(input("X = "))
             y = int(input("Y = "))
             start = time.perf_counter()
-            for e in range(1, y+1):
-                for d in range(1, x+1):
-                    for c in range(1, w+1):
-                        for b in range(1, v+1):
-                            for a in range(1, u+1):
+            for e in range(1, y):
+                for d in range(1, x):
+                    for c in range(1, w):
+                        for b in range(1, v):
+                            for a in range(1, u):
                                 hotel.add_room(a,b,c,d,e,0)
                                 
             end = time.perf_counter()
@@ -259,12 +259,12 @@ while(True):
             y = int(input("Y = "))
             z = int(input("Z = "))
             start = time.perf_counter()
-            for f in range(1, z+1):
-                for e in range(1, y+1):
-                    for d in range(1, x+1):
-                        for c in range(1, w+1):
-                            for b in range(1, v+1):
-                                for a in range(1, u+1): 
+            for f in range(1, z):
+                for e in range(1, y):
+                    for d in range(1, x):
+                        for c in range(1, w):
+                            for b in range(1, v):
+                                for a in range(1, u): 
                                     hotel.add_room(a,b,c,d,e,f)
                                     
             end = time.perf_counter()
