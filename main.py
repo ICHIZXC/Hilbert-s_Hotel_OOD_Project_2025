@@ -11,8 +11,9 @@ def timer(func):
         start = time.perf_counter()
         result = func(*args, **kwargs)
         end = time.perf_counter()
-
-        print(f"\n{func.__name__} runtime: {end - start:.6f} sec")
+        
+        elapsed = end - start
+        print(f"\n{func.__name__} runtime: {elapsed:.6f} sec")
         return result
     return wrapper
 
@@ -71,10 +72,7 @@ class Hotel:
                 for key, value in bucket:
                     data.append((key, value))
         df = pd.DataFrame(data, columns=["Room Number", "Details"])
-        df.to_csv(file_name, index=False)
-
-    def search(self, room_num):
-        return self.hash.search(room_num)     
+        df.to_csv(file_name, index=False)    
 
     @timer
     def sort(self):
@@ -177,7 +175,7 @@ while(True):
             print("Add U Guest")
             u = int(input("U = "))
             start = time.perf_counter()            
-            for a in range(1, u) : 
+            for a in range(1, u+1) : 
                 hotel.add_room(a,0,0,0,0,0)
                 
             end = time.perf_counter()
@@ -188,8 +186,8 @@ while(True):
             u = int(input("U = "))
             v = int(input("V = "))
             start = time.perf_counter()
-            for b in range(1, v):
-                for a in range(1, u): 
+            for b in range(1, v+1):
+                for a in range(1, u+1): 
                     hotel.add_room(a,b,0,0,0,0)
                     
             end = time.perf_counter()
@@ -201,9 +199,9 @@ while(True):
             v = int(input("V = "))
             w = int(input("W = "))
             start = time.perf_counter()
-            for c in range(1, w):
-                for b in range(1, v):
-                    for a in range(1, u): 
+            for c in range(1, w+1):
+                for b in range(1, v+1):
+                    for a in range(1, u+1): 
                         hotel.add_room(a,b,c,0,0,0)
                         
             end = time.perf_counter()
@@ -216,10 +214,10 @@ while(True):
             w = int(input("W = "))
             x = int(input("X = "))
             start = time.perf_counter()
-            for d in range(1, x):
-                for c in range(1, w):
-                    for b in range(1, v):
-                        for a in range(1, u):
+            for d in range(1, x+1):
+                for c in range(1, w+1):
+                    for b in range(1, v+1):
+                        for a in range(1, u+1):
                             hotel.add_room(a,b,c,d,0,0)
                             
             end = time.perf_counter()
@@ -233,11 +231,11 @@ while(True):
             x = int(input("X = "))
             y = int(input("Y = "))
             start = time.perf_counter()
-            for e in range(1, y):
-                for d in range(1, x):
-                    for c in range(1, w):
-                        for b in range(1, v):
-                            for a in range(1, u):
+            for e in range(1, y+1):
+                for d in range(1, x+1):
+                    for c in range(1, w+1):
+                        for b in range(1, v+1):
+                            for a in range(1, u+1):
                                 hotel.add_room(a,b,c,d,e,0)
                                 
             end = time.perf_counter()
@@ -252,12 +250,12 @@ while(True):
             y = int(input("Y = "))
             z = int(input("Z = "))
             start = time.perf_counter()
-            for f in range(1, z):
-                for e in range(1, y):
-                    for d in range(1, x):
-                        for c in range(1, w):
-                            for b in range(1, v):
-                                for a in range(1, u): 
+            for f in range(1, z+1):
+                for e in range(1, y+1):
+                    for d in range(1, x+1):
+                        for c in range(1, w+1):
+                            for b in range(1, v+1):
+                                for a in range(1, u+1): 
                                     hotel.add_room(a,b,c,d,e,f)
                                     
             end = time.perf_counter()
