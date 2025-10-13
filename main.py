@@ -87,6 +87,10 @@ class Hotel:
     
     def memory_usage(self):
         return asizeof.asizeof(self.hash) + asizeof.asizeof(self.root)
+
+    @timer
+    def guest_count(self) -> int:
+        return self.hash.count
     
     @timer
     def search_by_continent(self, continent_id:int) -> list:
@@ -158,6 +162,7 @@ while(True):
     print("(11) Find Guest from Specific Country")
     print("(12) Find Guest from Specific Continent")
     print("(13) Memory Used")
+    print("(14) Guest Count")
 
     print("(x) Exit")
     
@@ -294,6 +299,8 @@ while(True):
         print("Guest from Continent Number",continent_num," : ", hotel.search_by_continent(continent_num))
     elif cmd == '13':
         print(f"Memory used : {hotel.memory_usage()} byte(s)")
+    elif cmd == '14':
+        print("Guest Count : ", hotel.guest_count())
     elif cmd == 'x':
         break
     else:
