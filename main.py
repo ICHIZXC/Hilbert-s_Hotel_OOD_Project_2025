@@ -2,7 +2,6 @@ from AVL import AVL
 import pandas as pd
 from HashMap import HashTable
 import time
-import sys
 from pprint import pprint
 from pympler import asizeof
 
@@ -12,8 +11,9 @@ def timer(func):
         start = time.perf_counter()
         result = func(*args, **kwargs)
         end = time.perf_counter()
-
-        print(f"{func.__name__} runtime: {end - start:.6f} sec")
+        
+        elapsed = end - start
+        print(f"\n{func.__name__} runtime: {elapsed:.6f} sec")
         return result
     return wrapper
 
@@ -28,7 +28,6 @@ class Hotel:
     def calculate_room_number(self, guest: int, car: int, plane: int, town: int, country:int, continent:int) -> int:
         return ((guest+1)**2) * ((car+1)**3) * ((plane+1)**5) * ((town+1)**7) * ((country+1)**11) * ((continent+1)**13)
 
-    @timer
     def add_room(self, guest: int, car: int, plane: int, town: int, country: int, continent: int):
         room_num = self.calculate_room_number(guest, car, plane, town, country, continent)
         details = {
@@ -74,10 +73,7 @@ class Hotel:
                 for key, value in bucket:
                     data.append((key, value))
         df = pd.DataFrame(data, columns=["Room Number", "Details"])
-        df.to_csv(file_name, index=False)
-
-    def search(self, room_num):
-        return self.hash.search(room_num)     
+        df.to_csv(file_name, index=False)    
 
     @timer
     def sort(self):
@@ -143,7 +139,6 @@ initial_guest = int(input("Initial Guest: "))
 start = time.perf_counter()
 for i in range(initial_guest):
     hotel.add_room(i,0,0,0,0,0)
-print(hotel.hash)
 end = time.perf_counter()
 print("\nTotal runtime:", end - start)
 
@@ -169,7 +164,7 @@ while(True):
     print("----------𝘗𝘭𝘦𝘢𝘴𝘦 𝘴𝘦𝘭𝘦𝘤𝘵 𝘺𝘰𝘶𝘳 𝘤𝘰𝘮𝘮𝘢𝘯𝘥----------")
     cmd = input("Select Command : ")
     if cmd == '1':
-        print("(1) Add U Guest") #U V W X Y Z
+        print("(1) Add U Guest")
         print("(2) Add U Guest on V Car")
         print("(3) Add U Guest on V Car from W Plane")
         print("(4) Add U Guest on V Car from W Plane from X Town")
