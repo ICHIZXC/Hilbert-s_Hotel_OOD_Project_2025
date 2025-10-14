@@ -49,7 +49,7 @@ class Hotel:
         for i, value in enumerate(values):
             room_num *= ((value + 1) ** primes[i])
         return room_num
-
+    
     def add_room(self, values: list):
         room_num = self.calculate_room_number(values)
         details = {self.dimensions[i]: values[i] for i in range(len(values))}
@@ -98,6 +98,7 @@ class Hotel:
     def sort(self):
         return self.avl.inorder()
     
+    @timer
     def memory_usage(self):
         return asizeof.asizeof(self.hash) + asizeof.asizeof(self.root)
 
@@ -105,7 +106,8 @@ class Hotel:
     def guest_count(self) -> int:
         occupied_rooms = sum(1 for bucket in self.hash.table for _, value in bucket if value is not None)
         return occupied_rooms
-        
+    
+    @timer  
     def add_empty_room(self, room_num: int) -> bool:
         
         if room_num < 0:
@@ -129,6 +131,7 @@ class Hotel:
                 details[dimension_name] = 0
         return len(self.dimensions) - 1
 
+    @timer
     def track_by_dimension(self, dimension_name: str, value: int) -> list:
         if dimension_name not in self.dimensions:
             return []
@@ -174,11 +177,11 @@ while(True):
     print("(4) Print Hashed Room")
     print("(5) Print Sorted Room")
     print("(6) Save File")
-    print("(8) Memory Used")
-    print("(9) Guest Count")
-    print("(10) Add New Way")
-    print("(11) Track by Way")
-    print("(12) Add Empty Room") 
+    print("(7) Memory Used")
+    print("(8) Guest Count")
+    print("(9) Add New Way")
+    print("(10) Track by Way")
+    print("(11) Add Empty Room")
     print("(x) Exit")
     
     print("----------𝘗𝘭𝘦𝘢𝘴𝘦 𝘴𝘦𝘭𝘦𝘤𝘵 𝘺𝘰𝘶𝘳 𝘤𝘰𝘮𝘮𝘢𝘯𝘥----------")
@@ -213,13 +216,19 @@ while(True):
     elif cmd == '5':
         print("Sorted Room : ", end = '')
         hotel.sort()
+    
+    elif cmd == '6':
+        hotel.write_file("./hotel-room_lists.csv")
+    elif cmd == '7':
+        print(f"Memory used : {hotel.memory_usage()} byte(s)")
+    elif cmd == '8':
+        print("Guest Count : ", hotel.guest_count())
     elif cmd == '9':
-        new_dim = input("Enter new dimension name: ")
+        new_dim = input("Enter new way name: ")
         dim_index = hotel.add_dimension(new_dim)
-        print(f"Added new dimension '{new_dim}' at index {dim_index}")
-        print(f"Current dimensions: {hotel.dimensions}")
-        
-    elif cmd == '11':
+        print(f"Added new way '{new_dim}' at index {dim_index}")
+        print(f"Current ways: {hotel.dimensions}")
+    elif cmd == '10':
         print("Available way(s):", hotel.dimensions)
         dim_name = input("Enter way's name: ")
         if dim_name in hotel.dimensions:
@@ -229,8 +238,8 @@ while(True):
             for room_num, details in results:
                 print(f"Room {room_num}: {details}")
         else:
-            print("Dimension not found!")
-    elif cmd == '12':
+            print("Way not found!")
+    elif cmd == '11':
         room_num = int(input("Enter room number to add: "))
         hotel.add_empty_room(room_num)
     elif cmd == 'x':
