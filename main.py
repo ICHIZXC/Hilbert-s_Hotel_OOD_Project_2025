@@ -130,7 +130,6 @@ class Hotel:
         return len(self.dimensions) - 1
 
     def track_by_dimension(self, dimension_name: str, value: int) -> list:
-        """Find all rooms where the specified dimension has the given value"""
         if dimension_name not in self.dimensions:
             return []
         
@@ -144,6 +143,9 @@ class Hotel:
 hotel = Hotel()
 
 n_dimensions = int(input("Enter number of initial arrival ways: "))
+if n_dimensions < 1:
+    print("Invalid Input")
+    exit()
 print("Enter names for each way guests can arrive (e.g. from_cars, from_buses, from_planes)")
 for i in range(n_dimensions):
     dim_name = input(f"Enter name for arrival way {i+1}: ")
@@ -174,8 +176,8 @@ while(True):
     print("(6) Save File")
     print("(8) Memory Used")
     print("(9) Guest Count")
-    print("(10) Add New Dimension")
-    print("(11) Track by Dimension")
+    print("(10) Add New Way")
+    print("(11) Track by Way")
     print("(12) Add Empty Room") 
     print("(x) Exit")
     
@@ -184,7 +186,7 @@ while(True):
     if cmd == '1':
         values = []
         for i, dim in enumerate(hotel.dimensions):
-            count = int(input(f"Enter number of {dim}s: "))
+            count = int(input(f"Enter number of {dim}(s): "))
             values.append(count)
         
         start = time.perf_counter()
@@ -218,8 +220,8 @@ while(True):
         print(f"Current dimensions: {hotel.dimensions}")
         
     elif cmd == '11':
-        print("Available dimensions:", hotel.dimensions)
-        dim_name = input("Enter dimension name: ")
+        print("Available way(s):", hotel.dimensions)
+        dim_name = input("Enter way's name: ")
         if dim_name in hotel.dimensions:
             value = int(input(f"Enter {dim_name} value to track: "))
             results = hotel.track_by_dimension(dim_name, value)
