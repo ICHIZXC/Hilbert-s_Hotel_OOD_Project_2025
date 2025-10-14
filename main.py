@@ -24,25 +24,44 @@ class Hotel:
         self.hash = HashTable(size)
         self.root = None
         self.max_room_num = 0
+        self.dimensions = []
+        self.primes_cache = []
 
-    def calculate_room_number(self, guest: int, car: int, plane: int, town: int, country:int, continent:int) -> int:
-        return ((guest+1)**2) * ((car+1)**3) * ((plane+1)**5) * ((town+1)**7) * ((country+1)**11) * ((continent+1)**13)
+    def is_prime(self, n):
+        if n < 2:
+            return False
+        for i in range(2, int(n ** 0.5) + 1):
+            if n % i == 0:
+                return False
+        return True
 
-    def add_room(self, guest: int, car: int, plane: int, town: int, country: int, continent: int):
-        room_num = self.calculate_room_number(guest, car, plane, town, country, continent)
-        details = {
-            'continent': continent,
-            'country': country,
-            'town': town,
-            'plane': plane,
-            'car': car,
-            'guest': guest
-        }
+    def generate_primes(self, n):
+        while len(self.primes_cache) < n:
+            next_num = self.primes_cache[-1] + 2 if self.primes_cache else 2
+            while not self.is_prime(next_num):
+                next_num += 1
+            self.primes_cache.append(next_num)
+        return self.primes_cache[:n]
 
-        if self.hash.search(room_num) is None:
+    def calculate_room_number(self, values: list) -> int:
+        primes = self.generate_primes(len(values))
+        room_num = 1
+        for i, value in enumerate(values):
+            room_num *= ((value + 1) ** primes[i])
+        return room_num
+
+    def add_room(self, values: list):
+        room_num = self.calculate_room_number(values)
+        details = {self.dimensions[i]: values[i] for i in range(len(values))}
+
+        current_room = self.hash.search(room_num)
+        if current_room is None:
             self.hash.insert(room_num, details)
             self.avl.add(room_num)
             self.max_room_num = max(self.max_room_num, room_num)
+        elif current_room is None:
+            self.hash.remove(room_num)
+            self.hash.insert(room_num, details)
         else:
             i = 1
             while self.hash.search(room_num) is not None:
@@ -79,194 +98,108 @@ class Hotel:
     def sort(self):
         return self.avl.inorder()
     
-    @timer
-    def blank_room(self) -> int:
-        total_room = self.max_room_num
-        taken_room = sum(len(bucket) for bucket in self.hash.table)
-        return total_room - taken_room
-    
     def memory_usage(self):
         return asizeof.asizeof(self.hash) + asizeof.asizeof(self.root)
 
     @timer
     def guest_count(self) -> int:
-        return self.hash.count
+        occupied_rooms = sum(1 for bucket in self.hash.table for _, value in bucket if value is not None)
+        return occupied_rooms
+        
+    def add_empty_room(self, room_num: int) -> bool:
+        
+        if room_num < 0:
+            print("Error: Room number cannot be negative")
+            return False
+            
+        if self.hash.search(room_num) is not None:
+            print(f"Error: Room {room_num} already exists")
+            return False
+            
+        self.hash.insert(room_num, None)
+        self.avl.add(room_num)
+        self.max_room_num = max(self.max_room_num, room_num)
+        print(f"Successfully added empty room {room_num}")
+        return True
     
-    @timer
-    def search_by_continent(self, continent_id:int) -> list:
+    def add_dimension(self, dimension_name: str):
+        self.dimensions.append(dimension_name)
+        for bucket in self.hash.table:
+            for _, details in bucket:
+                details[dimension_name] = 0
+        return len(self.dimensions) - 1
+
+    def track_by_dimension(self, dimension_name: str, value: int) -> list:
+        """Find all rooms where the specified dimension has the given value"""
+        if dimension_name not in self.dimensions:
+            return []
+        
         result = []
         for bucket in self.hash.table:
             for room_num, details in bucket:
-                if details['continent'] == continent_id:
-                    result.append((room_num,details))
-        return result
-    
-    @timer
-    def search_by_country(self, country_id:int) -> list:
-        result = []
-        for bucket in self.hash.table:
-            for room_num, details in bucket:
-                if details['country'] == country_id:
-                    result.append((room_num,details))
-        return result
-    
-    @timer
-    def search_by_town(self, town_id:int) -> list:
-        result = []
-        for bucket in self.hash.table:
-            for room_num, details in bucket:
-                if details['town'] == town_id:
-                    result.append((room_num,details))
-        return result
-    
-    @timer
-    def search_by_plane(self, plane_id:int) -> list:
-        result = []
-        for bucket in self.hash.table:
-            for room_num, details in bucket:
-                if details['plane'] == plane_id:
-                    result.append((room_num,details))
-        return result
-    
-    @timer
-    def search_by_car(self, car_id:int) -> list:
-        result = []
-        for bucket in self.hash.table:
-            for room_num, details in bucket:
-                if details['car'] == car_id:
-                    result.append((room_num,details))
+                if details[dimension_name] == value:
+                    result.append((room_num, details))
         return result
 
 hotel = Hotel()
 
+n_dimensions = int(input("Enter number of initial arrival ways: "))
+print("Enter names for each way guests can arrive (e.g. from_cars, from_buses, from_planes)")
+for i in range(n_dimensions):
+    dim_name = input(f"Enter name for arrival way {i+1}: ")
+    hotel.dimensions.append(dim_name)
+
+print("\nCurrent arrival ways:", hotel.dimensions)
+print("You can add new parallel ways of arrival using option (10)")
+
 initial_guest = int(input("Initial Guest: "))
+if initial_guest < 0:
+    print("Invalid Input")
+    exit()
 start = time.perf_counter()
 for i in range(initial_guest):
-    hotel.add_room(i,0,0,0,0,0)
+    values = [i] + [0] * (len(hotel.dimensions) - 1)
+    hotel.add_room(values)
 end = time.perf_counter()
 print("\nTotal runtime:", end - start)
 
 while(True):
-    print(" ----------𝖂𝖊𝖑𝖈𝖔𝖒𝖊 𝖙𝖔 𝕳𝖎𝖑𝖘𝖇𝖊𝖗𝖙-𝕳𝖔𝖙𝖊𝖑----------")
+    print(" ----------𝖂𝖊𝖑𝖈𝖔𝖒𝖊 𝖙𝖔 𝕳𝖎𝖑𝖙𝖘𝖇𝖊𝖗𝖙-𝕻𝖔𝖗𝖙𝖆𝖑----------")
     print("Catalog : ")
     print("(1) Add Guest")
     print("(2) Search Room")
     print("(3) Delete Room")    
     print("(4) Print Hashed Room")
     print("(5) Print Sorted Room")
-    print("(6) Print Blank Room")
-    print("(7) Save File")
-    print("(8) Find Guest from Specific Car")
-    print("(9) Find Guest from Specific Plane")
-    print("(10) Find Guest from Specific Town")
-    print("(11) Find Guest from Specific Country")
-    print("(12) Find Guest from Specific Continent")
-    print("(13) Memory Used")
-    print("(14) Guest Count")
-
+    print("(6) Save File")
+    print("(8) Memory Used")
+    print("(9) Guest Count")
+    print("(10) Add New Dimension")
+    print("(11) Track by Dimension")
+    print("(12) Add Empty Room") 
     print("(x) Exit")
     
     print("----------𝘗𝘭𝘦𝘢𝘴𝘦 𝘴𝘦𝘭𝘦𝘤𝘵 𝘺𝘰𝘶𝘳 𝘤𝘰𝘮𝘮𝘢𝘯𝘥----------")
     cmd = input("Select Command : ")
     if cmd == '1':
-        print("(1) Add U Guest")
-        print("(2) Add U Guest on V Car")
-        print("(3) Add U Guest on V Car from W Plane")
-        print("(4) Add U Guest on V Car from W Plane from X Town")
-        print("(5) Add U Guest on V Car from W Plane from X Town in Y Country")
-        print("(6) Add U Guest on V Car from W Plane from X Town in Y Country in Z Continent")
-        opt = input("Select Option : ")
+        values = []
+        for i, dim in enumerate(hotel.dimensions):
+            count = int(input(f"Enter number of {dim}s: "))
+            values.append(count)
         
-        if opt == '1':
-            print("Add U Guest")
-            u = int(input("U = "))
-            start = time.perf_counter()            
-            for a in range(1, u+1) : 
-                hotel.add_room(a,0,0,0,0,0)
+        start = time.perf_counter()
+        def generate_combinations(current, depth):
+            if depth == len(values):
+                hotel.add_room(current)
+                return
+            for i in range(1, values[depth] + 1):
+                new_current = current + [i]
+                generate_combinations(new_current, depth + 1)
                 
-            end = time.perf_counter()
-            print("\nTotal runtime:", end - start)
-            
-        elif opt == '2':
-            print("Add U Guest on V Car")
-            u = int(input("U = "))
-            v = int(input("V = "))
-            start = time.perf_counter()
-            for b in range(1, v+1):
-                for a in range(1, u+1): 
-                    hotel.add_room(a,b,0,0,0,0)
-                    
-            end = time.perf_counter()
-            print("\nTotal runtime:", end - start)
-            
-        elif opt == '3':
-            print("Add U Guest on V Car from W Plane")
-            u = int(input("U = "))
-            v = int(input("V = "))
-            w = int(input("W = "))
-            start = time.perf_counter()
-            for c in range(1, w+1):
-                for b in range(1, v+1):
-                    for a in range(1, u+1): 
-                        hotel.add_room(a,b,c,0,0,0)
-                        
-            end = time.perf_counter()
-            print("\nTotal runtime:", end - start)
-            
-        elif opt == '4':
-            print("Add U Guest on V Car from W Plane from X Town")
-            u = int(input("U = "))
-            v = int(input("V = "))
-            w = int(input("W = "))
-            x = int(input("X = "))
-            start = time.perf_counter()
-            for d in range(1, x+1):
-                for c in range(1, w+1):
-                    for b in range(1, v+1):
-                        for a in range(1, u+1):
-                            hotel.add_room(a,b,c,d,0,0)
-                            
-            end = time.perf_counter()
-            print("\nTotal runtime:", end - start)
-            
-        elif opt == '5':
-            print("Add U Guest on V Car from W Plane from X Town in Y Country")
-            u = int(input("U = "))
-            v = int(input("V = "))
-            w = int(input("W = "))
-            x = int(input("X = "))
-            y = int(input("Y = "))
-            start = time.perf_counter()
-            for e in range(1, y+1):
-                for d in range(1, x+1):
-                    for c in range(1, w+1):
-                        for b in range(1, v+1):
-                            for a in range(1, u+1):
-                                hotel.add_room(a,b,c,d,e,0)
-                                
-            end = time.perf_counter()
-            print("\nTotal runtime:", end - start)
-            
-        elif opt == '6':
-            print("Add U Guest on V Car from W Plane from X Town in Y Country in Z Continent")
-            u = int(input("U = "))
-            v = int(input("V = "))
-            w = int(input("W = "))
-            x = int(input("X = "))
-            y = int(input("Y = "))
-            z = int(input("Z = "))
-            start = time.perf_counter()
-            for f in range(1, z+1):
-                for e in range(1, y+1):
-                    for d in range(1, x+1):
-                        for c in range(1, w+1):
-                            for b in range(1, v+1):
-                                for a in range(1, u+1): 
-                                    hotel.add_room(a,b,c,d,e,f)
-                                    
-            end = time.perf_counter()
-            print("\nTotal runtime:", end - start)
-            
+        generate_combinations([], 0)
+        end = time.perf_counter()
+        print("\nTotal runtime:", end - start)
+
     elif cmd == '2':
         room_num = int(input("Enter Room Number : "))
         print("Search Room", room_num," : ", hotel.search(room_num))
@@ -278,29 +211,26 @@ while(True):
     elif cmd == '5':
         print("Sorted Room : ", end = '')
         hotel.sort()
-    elif cmd == '6':
-        print("Blank Room : ", hotel.blank_room())
-    elif cmd == '7':
-        hotel.write_file("./hotel-room_lists.csv")
-    elif cmd == '8':
-        car_num = int(input("Enter Car Number : "))
-        print("Guest from Car Number",car_num," : ", hotel.search_by_car(car_num))
     elif cmd == '9':
-        plane_num = int(input("Enter Plane Number : "))
-        print("Guest from Plane Number",plane_num," : ", hotel.search_by_plane(plane_num))
-    elif cmd == '10':
-        town_num = int(input("Enter Town Number : "))
-        print("Guest from Town Number",town_num," : ", hotel.search_by_town(town_num))
+        new_dim = input("Enter new dimension name: ")
+        dim_index = hotel.add_dimension(new_dim)
+        print(f"Added new dimension '{new_dim}' at index {dim_index}")
+        print(f"Current dimensions: {hotel.dimensions}")
+        
     elif cmd == '11':
-        country_num = int(input("Enter Country Number : "))
-        print("Guest from Country Number",country_num," : ", hotel.search_by_country(country_num))
+        print("Available dimensions:", hotel.dimensions)
+        dim_name = input("Enter dimension name: ")
+        if dim_name in hotel.dimensions:
+            value = int(input(f"Enter {dim_name} value to track: "))
+            results = hotel.track_by_dimension(dim_name, value)
+            print(f"Found {len(results)} rooms with {dim_name}={value}:")
+            for room_num, details in results:
+                print(f"Room {room_num}: {details}")
+        else:
+            print("Dimension not found!")
     elif cmd == '12':
-        continent_num = int(input("Enter Continent Number : "))
-        print("Guest from Continent Number",continent_num," : ", hotel.search_by_continent(continent_num))
-    elif cmd == '13':
-        print(f"Memory used : {hotel.memory_usage()} byte(s)")
-    elif cmd == '14':
-        print("Guest Count : ", hotel.guest_count())
+        room_num = int(input("Enter room number to add: "))
+        hotel.add_empty_room(room_num)
     elif cmd == 'x':
         break
     else:
