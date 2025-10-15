@@ -36,11 +36,13 @@ class Hotel:
         return True
 
     def generate_primes(self, n):
-        while len(self.primes_cache) < n:
-            next_num = self.primes_cache[-1] + 2 if self.primes_cache else 2
-            while not self.is_prime(next_num):
-                next_num += 1
-            self.primes_cache.append(next_num)
+        if not self.primes_cache or len(self.primes_cache) < n:
+            self.primes_cache = []
+            num = 2
+            while len(self.primes_cache) < n:
+                if self.is_prime(num):
+                    self.primes_cache.append(num)
+                num += 1
         return self.primes_cache[:n]
 
     def calculate_room_number(self, values: list) -> int:
@@ -59,9 +61,6 @@ class Hotel:
             self.hash.insert(room_num, details)
             self.avl.add(room_num)
             self.max_room_num = max(self.max_room_num, room_num)
-        elif current_room is None:
-            self.hash.remove(room_num)
-            self.hash.insert(room_num, details)
         else:
             i = 1
             while self.hash.search(room_num) is not None:
