@@ -26,6 +26,7 @@ class Hotel:
         self.max_room_num = 0
         self.dimensions = []
         self.primes_cache = []
+        self.guest_status_marker = "old"
 
     def is_prime(self, n):
         if n < 2:
@@ -52,9 +53,12 @@ class Hotel:
             room_num *= ((value + 1) ** primes[i])
         return room_num
     
-    def add_room(self, values: list):
+    def add_room(self, values: list, is_initial=False):
         room_num = self.calculate_room_number(values)
         details = {self.dimensions[i]: values[i] for i in range(len(values))}
+        details['status'] = self.guest_status_marker
+        if is_initial:
+            details['initial'] = True
 
         current_room = self.hash.search(room_num)
         if current_room is None:
@@ -89,7 +93,22 @@ class Hotel:
         for bucket in self.hash.table:
             if bucket:
                 for key, value in bucket:
-                    data.append((key, value))
+                    details_list = []
+                    if value:
+                        if 'initial' in value and value['initial']:
+                            details_list.append('initial')
+                        elif 'manually added' in value:
+                            details_list.append('manual')
+                        else:
+                            for dim in self.dimensions:
+                                if dim in value and value[dim] != 0:
+                                    details_list.append(dim)
+                        details_list.append(value.get('status', 'old'))
+                    details_tuple = tuple(details_list)
+                    data.append((key, details_tuple))
+        
+        data.sort(key=lambda x: x[0])
+        
         df = pd.DataFrame(data, columns=["Room Number", "Details"])
         df.to_csv(file_name, index=False)    
 
@@ -106,6 +125,19 @@ class Hotel:
         occupied_rooms = sum(1 for bucket in self.hash.table for _, value in bucket if value is not None)
         return occupied_rooms
     
+    def guest_status_summary(self):
+        old_count = 0
+        new_count = 0
+        for bucket in self.hash.table:
+            for _, details in bucket:
+                if details is not None:
+                    status = details.get('status', 'old')
+                    if status == 'old':
+                        old_count += 1
+                    else:
+                        new_count += 1
+        return old_count, new_count
+    
     @timer  
     def add_manual_room(self, room_num: int):
         
@@ -116,18 +148,35 @@ class Hotel:
         if self.hash.search(room_num) is not None:
             print(f"Error: Room {room_num} already exists")
             return False
+        
+        self.mark_all_guests_as_old()
+        self.guest_status_marker = "new"
             
-        details = {"": 'manually added'}
+        details = {"manually added": '', 'status': self.guest_status_marker}
         self.hash.insert(room_num, details)
         self.avl.add(room_num)
         self.max_room_num = max(self.max_room_num, room_num)
         print(f"Successfully added manual room {room_num}")
     
+    def mark_all_guests_as_old(self):
+        for bucket in self.hash.table:
+            for _, details in bucket:
+                if details is not None:
+                    details['status'] = 'old'
+
+    def prepare_for_new_guests(self):
+        self.mark_all_guests_as_old()
+        self.guest_status_marker = "new"
+        print("Hotel ready for new guest arrivals")
+
     def add_dimension(self, dimension_name: str):
         self.dimensions.append(dimension_name)
         for bucket in self.hash.table:
             for _, details in bucket:
-                details[dimension_name] = 0
+                if details is not None:
+                    # Only add dimension to non-initial, non-manual rooms
+                    if 'initial' not in details and 'manually added' not in details:
+                        details[dimension_name] = 0
         return len(self.dimensions) - 1
 
     def remove_dimension(self, dimension_name: str):
@@ -158,8 +207,9 @@ class Hotel:
         result = []
         for bucket in self.hash.table:
             for room_num, details in bucket:
-                if details[dimension_name] == value:
-                    result.append((room_num, details))
+                if details is not None and dimension_name in details:
+                    if details[dimension_name] == value:
+                        result.append((room_num, details))
         return result
 
 hotel = Hotel()
@@ -183,7 +233,7 @@ if initial_guest < 0:
 start = time.perf_counter()
 for i in range(initial_guest):
     values = [i] + [0] * (len(hotel.dimensions) - 1)
-    hotel.add_room(values)
+    hotel.add_room(values, is_initial=True)
 end = time.perf_counter()
 print("\nTotal runtime:", end - start)
 
@@ -207,27 +257,42 @@ while(True):
     print("----------𝘗𝘭𝘦𝘢𝘴𝘦 𝘴𝘦𝘭𝘦𝘤𝘵 𝘺𝘰𝘶𝘳 𝘤𝘰𝘮𝘮𝘢𝘯𝘥----------")
     cmd = input("Select Command : ")
     if cmd == '1':
-        values = []
-        for i, dim in enumerate(hotel.dimensions):
-            count = int(input(f"Enter number of {dim}(s): "))
-            values.append(count)
-        
-        start = time.perf_counter()
-        for dim_idx in range(len(values)):
-            for guest_num in range(1, values[dim_idx] + 1):
-                current_values = [0] * len(values)
-                current_values[dim_idx] = guest_num
-                hotel.add_room(current_values)
-        
-        end = time.perf_counter()
-        print("\nTotal runtime:", end - start)
+        try:
+            values = []
+            for i, dim in enumerate(hotel.dimensions):
+                count = int(input(f"Enter number of {dim}(s): "))
+                if count < 0:
+                    print("Error: Cannot add negative guests")
+                    continue
+                values.append(count)
+            
+            hotel.mark_all_guests_as_old()
+            hotel.guest_status_marker = "new"
+            
+            start = time.perf_counter()
+            for dim_idx in range(len(values)):
+                for guest_num in range(1, values[dim_idx] + 1):
+                    current_values = [0] * len(values)
+                    current_values[dim_idx] = guest_num
+                    hotel.add_room(current_values)
+            
+            end = time.perf_counter()
+            print("\nTotal runtime:", end - start)
+        except ValueError:
+            print("Error: Invalid input. Please enter a valid number.")
 
     elif cmd == '2':
-        room_num = int(input("Enter Room Number : "))
-        print("Search Room", room_num," : ", hotel.search(room_num))
+        try:
+            room_num = int(input("Enter Room Number : "))
+            print("Search Room", room_num," : ", hotel.search(room_num))
+        except ValueError:
+            print("Error: Invalid room number")
     elif cmd == '3':
-        room_num = int(input("Enter Room Number : "))
-        hotel.delete(room_num)
+        try:
+            room_num = int(input("Enter Room Number : "))
+            hotel.delete(room_num)
+        except ValueError:
+            print("Error: Invalid room number")
     elif cmd == '4':
         print(hotel.hash)
     elif cmd == '5':
@@ -246,19 +311,25 @@ while(True):
         print(f"Added new way '{new_dim}' at index {dim_index}")
         print(f"Current ways: {hotel.dimensions}")
     elif cmd == '10':
-        print("Available way(s):", hotel.dimensions)
-        dim_name = input("Enter way's name: ")
-        if dim_name in hotel.dimensions:
-            value = int(input(f"Enter {dim_name} value to track: "))
-            results = hotel.track_by_dimension(dim_name, value)
-            print(f"Found {len(results)} rooms with {dim_name}={value}:")
-            for room_num, details in results:
-                print(f"Room {room_num}: {details}")
-        else:
-            print("Way not found!")
+        try:
+            print("Available way(s):", hotel.dimensions)
+            dim_name = input("Enter way's name: ")
+            if dim_name in hotel.dimensions:
+                value = int(input(f"Enter {dim_name} value to track: "))
+                results = hotel.track_by_dimension(dim_name, value)
+                print(f"Found {len(results)} rooms with {dim_name}={value}:")
+                for room_num, details in results:
+                    print(f"Room {room_num}: {details}")
+            else:
+                print("Way not found!")
+        except ValueError:
+            print("Error: Invalid input")
     elif cmd == '11':
-        room_num = int(input("Enter room number to add: "))
-        hotel.add_manual_room(room_num)
+        try:
+            room_num = int(input("Enter room number to add: "))
+            hotel.add_manual_room(room_num)
+        except ValueError:
+            print("Error: Invalid room number")
     elif cmd == '12':
         print("Current arrival ways:", hotel.dimensions)
         dim_name = input("Enter way name to remove: ")
