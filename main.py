@@ -1,4 +1,4 @@
-from AVL import AVL
+from AVL import Treap
 import pandas as pd
 from HashMap import HashTable
 import time
@@ -20,7 +20,7 @@ def timer(func):
 
 class Hotel:
     def __init__(self, size = 101):
-        self.avl = AVL()
+        self.treap = Treap()
         self.hash = HashTable(size)
         self.root = None
         self.max_room_num = 0
@@ -63,7 +63,7 @@ class Hotel:
         current_room = self.hash.search(room_num)
         if current_room is None:
             self.hash.insert(room_num, details)
-            self.avl.add(room_num)
+            self.treap.add(room_num)
             self.max_room_num = max(self.max_room_num, room_num)
         else:
             i = 1
@@ -71,7 +71,7 @@ class Hotel:
                 room_num += i ** 2
                 i += 1
             self.hash.insert(room_num, details)
-            self.avl.add(room_num)
+            self.treap.add(room_num)
             self.max_room_num = max(self.max_room_num, room_num)
 
         return room_num
@@ -84,7 +84,7 @@ class Hotel:
     @timer
     def delete(self, room_num):
         if self.hash.search(room_num):
-            self.avl.delete_node(room_num)
+            self.treap.delete_node(room_num)
             self.hash.remove(room_num)
 
     @timer
@@ -114,7 +114,7 @@ class Hotel:
 
     @timer
     def sort(self):
-        return self.avl.inorder()
+        return self.treap.inorder()
     
     @timer
     def memory_usage(self):
@@ -151,11 +151,11 @@ class Hotel:
         if self.hash.search(room_num) is not None:
             ans = input(f"Room number {room_num} is already occupied, do you want to replace?\n(1) Yes\n(2) No\nSelect Command : ")
             if ans == '1':
-                self.avl.delete_node(room_num)
+                self.treap.delete_node(room_num)
                 self.hash.remove(room_num)
                 details = {"manually added": '', 'status': self.guest_status_marker}
                 self.hash.insert(room_num, details)
-                self.avl.add(room_num)
+                self.treap.add(room_num)
                 self.max_room_num = max(self.max_room_num, room_num)
                 print(f"Successfully replaced and added manual room {room_num}")
                 return True
@@ -168,7 +168,7 @@ class Hotel:
         
         details = {"manually added": '', 'status': self.guest_status_marker}
         self.hash.insert(room_num, details)
-        self.avl.add(room_num)
+        self.treap.add(room_num)
         self.max_room_num = max(self.max_room_num, room_num)
         print(f"Successfully added manual room {room_num}")
         return True
