@@ -1,4 +1,4 @@
-from AVL import Treap
+from Treap import Treap
 import pandas as pd
 from HashMap import HashTable
 import time
