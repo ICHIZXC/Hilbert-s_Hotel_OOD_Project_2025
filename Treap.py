@@ -14,7 +14,6 @@ class Treap:
     def __init__(self):
         self.root = None
 
-    # Add method for compatibility with main.py
     def add(self, data):
         self.root = self._add(self.root, data)
         return self.root
