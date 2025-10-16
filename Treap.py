@@ -35,7 +35,6 @@ class Treap:
         self.root, deleted = self._delete(self.root, data)
         return deleted
     
-    # Alias for compatibility with main.py
     def delete_node(self, data):
         return self.delete(data)
 
@@ -84,15 +83,14 @@ class Treap:
         self._inorder(self.root, result)
         return result
     
-    # Alias for compatibility with main.py
     def inorder(self):
         result = []
         self._inorder(self.root, result)
-        print(result)  # Print the sorted rooms
+        print(result)
         return result
 
     def _inorder(self, node, result):
         if node:
             self._inorder(node.left, result)
-            result.append(node.data)  # Append the data (room number), not the node
+            result.append(node.data)
             self._inorder(node.right, result)

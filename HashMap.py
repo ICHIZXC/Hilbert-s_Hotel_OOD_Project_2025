@@ -9,9 +9,8 @@ class HashTable:
         lines = []
         for i, bucket in enumerate(self.table):
             if bucket:
-                # Only include non-None details
                 filtered_bucket = [(room_num, details) for room_num, details in bucket if details is not None]
-                if filtered_bucket:  # Only add line if there are valid entries
+                if filtered_bucket:
                     lines.append(f"Bucket {i}: {filtered_bucket}")
         return "\n".join(lines)
 
