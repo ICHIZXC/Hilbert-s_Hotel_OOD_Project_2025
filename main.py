@@ -107,7 +107,7 @@ class Hotel:
         return occupied_rooms
     
     @timer  
-    def add_empty_room(self, room_num: int) -> bool:
+    def add_manual_room(self, room_num: int) -> bool:
         
         if room_num < 0:
             print("Error: Room number cannot be negative")
@@ -117,10 +117,12 @@ class Hotel:
             print(f"Error: Room {room_num} already exists")
             return False
             
-        self.hash.insert(room_num, None)
+        # Add room with "manually added" marker instead of None
+        details = {"manually added": True}
+        self.hash.insert(room_num, details)
         self.avl.add(room_num)
         self.max_room_num = max(self.max_room_num, room_num)
-        print(f"Successfully added empty room {room_num}")
+        print(f"Successfully added manual room {room_num}")
         return True
     
     def add_dimension(self, dimension_name: str):
@@ -129,6 +131,28 @@ class Hotel:
             for _, details in bucket:
                 details[dimension_name] = 0
         return len(self.dimensions) - 1
+
+    def remove_dimension(self, dimension_name: str):
+        if dimension_name not in self.dimensions:
+            print(f"Error: Way '{dimension_name}' does not exist")
+            return False
+        
+        if len(self.dimensions) <= 1:
+            print("Error: Cannot remove the last arrival way. At least one way must remain.")
+            return False
+        
+        # Remove the dimension from the list
+        self.dimensions.remove(dimension_name)
+        
+        # Remove the dimension from all existing room details
+        for bucket in self.hash.table:
+            for _, details in bucket:
+                if details and dimension_name in details:
+                    del details[dimension_name]
+        
+        print(f"Successfully removed way '{dimension_name}'")
+        print(f"Remaining ways: {self.dimensions}")
+        return True
 
     @timer
     def track_by_dimension(self, dimension_name: str, value: int) -> list:
@@ -180,7 +204,8 @@ while(True):
     print("(8) Guest Count")
     print("(9) Add New Way")
     print("(10) Track by Way")
-    print("(11) Add Empty Room")
+    print("(11) Add Manual Room")
+    print("(12) Remove Arrival Way")
     print("(x) Exit")
     
     print("----------𝘗𝘭𝘦𝘢𝘴𝘦 𝘴𝘦𝘭𝘦𝘤𝘵 𝘺𝘰𝘶𝘳 𝘤𝘰𝘮𝘮𝘢𝘯𝘥----------")
@@ -192,15 +217,15 @@ while(True):
             values.append(count)
         
         start = time.perf_counter()
-        def generate_combinations(current, depth):
-            if depth == len(values):
-                hotel.add_room(current)
-                return
-            for i in range(1, values[depth] + 1):
-                new_current = current + [i]
-                generate_combinations(new_current, depth + 1)
-                
-        generate_combinations([], 0)
+        # Add guests from each way separately
+        # This keeps room numbers smaller by not mixing dimensions
+        for dim_idx in range(len(values)):
+            for guest_num in range(1, values[dim_idx] + 1):
+                # Create a values list where only the current dimension is incremented
+                current_values = [0] * len(values)
+                current_values[dim_idx] = guest_num
+                hotel.add_room(current_values)
+        
         end = time.perf_counter()
         print("\nTotal runtime:", end - start)
 
@@ -240,7 +265,11 @@ while(True):
             print("Way not found!")
     elif cmd == '11':
         room_num = int(input("Enter room number to add: "))
-        hotel.add_empty_room(room_num)
+        hotel.add_manual_room(room_num)
+    elif cmd == '12':
+        print("Current arrival ways:", hotel.dimensions)
+        dim_name = input("Enter way name to remove: ")
+        hotel.remove_dimension(dim_name)
     elif cmd == 'x':
         break
     else:

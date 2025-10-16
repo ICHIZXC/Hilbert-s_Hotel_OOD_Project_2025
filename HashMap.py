@@ -9,7 +9,15 @@ class HashTable:
         lines = []
         for i, bucket in enumerate(self.table):
             if bucket:
-                lines.append(f"Bucket {i}: {bucket}")
+                filtered_bucket = []
+                for room_num, details in bucket:
+                    if details is not None:
+                        # Filter out dimensions with value 0
+                        filtered_details = {k: v for k, v in details.items() if v != 0}
+                        filtered_bucket.append((room_num, filtered_details))
+                    else:
+                        filtered_bucket.append((room_num, details))
+                lines.append(f"Bucket {i}: {filtered_bucket}")
         return "\n".join(lines)
 
     def hash_key(self, key) -> int:
