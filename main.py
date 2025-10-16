@@ -117,7 +117,6 @@ class Hotel:
             print(f"Error: Room {room_num} already exists")
             return False
             
-        # Add room with "manually added" marker instead of None
         details = {"manually added": True}
         self.hash.insert(room_num, details)
         self.avl.add(room_num)
@@ -141,10 +140,8 @@ class Hotel:
             print("Error: Cannot remove the last arrival way. At least one way must remain.")
             return False
         
-        # Remove the dimension from the list
         self.dimensions.remove(dimension_name)
         
-        # Remove the dimension from all existing room details
         for bucket in self.hash.table:
             for _, details in bucket:
                 if details and dimension_name in details:
@@ -217,11 +214,8 @@ while(True):
             values.append(count)
         
         start = time.perf_counter()
-        # Add guests from each way separately
-        # This keeps room numbers smaller by not mixing dimensions
         for dim_idx in range(len(values)):
             for guest_num in range(1, values[dim_idx] + 1):
-                # Create a values list where only the current dimension is incremented
                 current_values = [0] * len(values)
                 current_values[dim_idx] = guest_num
                 hotel.add_room(current_values)
