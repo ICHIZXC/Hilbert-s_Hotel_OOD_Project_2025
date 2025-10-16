@@ -177,8 +177,7 @@ class Hotel:
         for bucket in self.hash.table:
             for _, details in bucket:
                 if details is not None:
-                    if 'initial' not in details and 'manually added' not in details:
-                        details['status'] = 'old'
+                    details['status'] = 'old'
 
     def prepare_for_new_guests(self):
         self.mark_all_guests_as_old()
