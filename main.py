@@ -144,25 +144,41 @@ class Hotel:
         if room_num < 0:
             print("Error: Room number cannot be negative")
             return False
-            
-        if self.hash.search(room_num) is not None:
-            print(f"Error: Room {room_num} already exists")
-            return False
         
         self.mark_all_guests_as_old()
         self.guest_status_marker = "new"
             
+        if self.hash.search(room_num) is not None:
+            ans = input(f"Room number {room_num} is already occupied, do you want to replace?\n(1) Yes\n(2) No\nSelect Command : ")
+            if ans == '1':
+                self.avl.delete_node(room_num)
+                self.hash.remove(room_num)
+                details = {"manually added": '', 'status': self.guest_status_marker}
+                self.hash.insert(room_num, details)
+                self.avl.add(room_num)
+                self.max_room_num = max(self.max_room_num, room_num)
+                print(f"Successfully replaced and added manual room {room_num}")
+                return True
+            elif ans == '2':
+                print("Discarded")
+                return False
+            else:
+                print("Invalid Input")
+                return False
+        
         details = {"manually added": '', 'status': self.guest_status_marker}
         self.hash.insert(room_num, details)
         self.avl.add(room_num)
         self.max_room_num = max(self.max_room_num, room_num)
         print(f"Successfully added manual room {room_num}")
+        return True
     
     def mark_all_guests_as_old(self):
         for bucket in self.hash.table:
             for _, details in bucket:
                 if details is not None:
-                    details['status'] = 'old'
+                    if 'initial' not in details and 'manually added' not in details:
+                        details['status'] = 'old'
 
     def prepare_for_new_guests(self):
         self.mark_all_guests_as_old()
@@ -259,12 +275,17 @@ while(True):
     if cmd == '1':
         try:
             values = []
+            valid_input = True
             for i, dim in enumerate(hotel.dimensions):
                 count = int(input(f"Enter number of {dim}(s): "))
                 if count < 0:
                     print("Error: Cannot add negative guests")
-                    continue
+                    valid_input = False
+                    break
                 values.append(count)
+            
+            if not valid_input:
+                continue
             
             hotel.mark_all_guests_as_old()
             hotel.guest_status_marker = "new"
