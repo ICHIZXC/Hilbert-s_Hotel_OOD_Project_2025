@@ -12,8 +12,7 @@ class HashTable:
                 filtered_bucket = []
                 for room_num, details in bucket:
                     if details is not None:
-                        filtered_details = {k: v for k, v in details.items() if v != 0}
-                        filtered_bucket.append((room_num, filtered_details))
+                        filtered_bucket.append((room_num, details))
                     else:
                         filtered_bucket.append((room_num, details))
                 lines.append(f"Bucket {i}: {filtered_bucket}")

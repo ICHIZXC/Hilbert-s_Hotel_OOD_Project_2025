@@ -107,7 +107,7 @@ class Hotel:
         return occupied_rooms
     
     @timer  
-    def add_manual_room(self, room_num: int) -> bool:
+    def add_manual_room(self, room_num: int):
         
         if room_num < 0:
             print("Error: Room number cannot be negative")
@@ -117,12 +117,11 @@ class Hotel:
             print(f"Error: Room {room_num} already exists")
             return False
             
-        details = {"manually added": True}
+        details = {"": 'manually added'}
         self.hash.insert(room_num, details)
         self.avl.add(room_num)
         self.max_room_num = max(self.max_room_num, room_num)
         print(f"Successfully added manual room {room_num}")
-        return True
     
     def add_dimension(self, dimension_name: str):
         self.dimensions.append(dimension_name)
