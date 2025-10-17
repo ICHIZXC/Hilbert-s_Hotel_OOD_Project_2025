@@ -41,17 +41,14 @@ class Hotel:
         return True
 
     def generate_primes(self, n):
-        # Only generate new primes if we need more
         if len(self.primes_cache) >= n:
             return self.primes_cache[:n]
         
-        # Start from where we left off
         if self.primes_cache:
             num = self.primes_cache[-1] + 1
         else:
             num = 2
         
-        # Generate only the additional primes needed
         while len(self.primes_cache) < n:
             if self.is_prime(num):
                 self.primes_cache.append(num)
@@ -69,22 +66,18 @@ class Hotel:
     def add_room(self, values: list, is_initial=False):
         room_num = self.calculate_room_number(values)
         
-        # Check if room exists (single search)
         if self.hash.search(room_num) is not None:
-            # Collision resolution - find next available room
             i = 1
             room_num += i ** 2
             while self.hash.search(room_num) is not None:
                 i += 1
                 room_num += i ** 2
         
-        # Create details dictionary in one go
         details = {self.dimensions[i]: values[i] for i in range(len(values))}
         details['status'] = self.guest_status_marker
         if is_initial:
             details['initial'] = True
         
-        # Insert into both data structures
         self.hash.insert(room_num, details)
         self.treap.add(room_num)
         self.max_room_num = max(self.max_room_num, room_num)
@@ -109,12 +102,10 @@ class Hotel:
             return False
         
         try:
-            # Use list comprehension for better performance
             data = [(key, value.get('status', 'old')) 
                     for bucket in self.hash.table if bucket
                     for key, value in bucket if value]
             
-            # Sort in-place
             data.sort(key=lambda x: x[0])
             
             df = pd.DataFrame(data, columns=["Room Number", "Guest Status"])
